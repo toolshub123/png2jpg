@@ -1,0 +1,226 @@
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PNG to JPG Converter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 10px;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    nav {
+      margin-top: 10px;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .ad-space {
+      width: 300px;
+      height: 250px;
+      border: 1px solid #ccc;
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f0f0f0;
+    }
+
+    #imagePreview {
+      max-width: 500px;
+      margin: 20px auto;
+      border: 2px solid #ccc;
+    }
+
+    #downloadButton {
+      display: none;
+      margin-top: 20px;
+    }
+
+    footer {
+      margin-top: 30px;
+      background-color: #f0f0f0;
+      padding: 10px;
+    }
+
+    footer p {
+      margin: 0;
+    }
+
+    footer a {
+      color: #333;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Loading Spinner Styles */
+    .loading-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
+    }
+
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Floating Cookie Notification Styles */
+    .cookie-notification {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      z-index: 9999;
+    }
+
+    .cookie-notification p {
+      margin: 0;
+      flex: 1;
+    }
+
+    .cookie-notification button {
+      margin-left: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PNG to JPG Converter</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <div class="ad-space">
+    <img src="placeholder_ad.jpg" alt="Ad Space">
+  </div>
+
+  <p>Upload a PNG image and click the "Convert" button to download it as a JPG image.</p>
+  
+  <input type="file" id="fileInput">
+  <button onclick="convertToJpg()">Convert</button>
+
+  <!-- Loading Page -->
+  <div class="loading-container" id="loadingContainer">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- Floating Cookie Notification -->
+  <div class="cookie-notification" id="cookieNotification">
+    <p>This website uses cookies to improve your experience. Do you accept cookies?</p>
+    <button onclick="acceptCookies()">Accept</button>
+    <button onclick="denyCookies()">Deny</button>
+  </div>
+  
+  <div id="imagePreview"></div>
+  <a href="#" id="downloadButton" download="converted.jpg">Download JPG</a>
+
+  <footer>
+    <p>© 2023 Website with Ad Space. All rights reserved.</p>
+    <nav>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">FAQ</a>
+    </nav>
+  </footer>
+
+  <script>
+    function convertToJpg() {
+      const fileInput = document.getElementById('fileInput');
+      const imagePreview = document.getElementById('imagePreview');
+      const downloadButton = document.getElementById('downloadButton');
+      const loadingContainer = document.getElementById('loadingContainer');
+      const file = fileInput.files[0];
+
+      if (file && file.type === 'image/png') {
+        loadingContainer.style.display = 'block'; // Show the loading page
+
+        const reader = new FileReader();
+        reader.onload = function() {
+          const image = new Image();
+          image.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = image.width;
+            canvas.height = image.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(image, 0, 0);
+
+            // Convert PNG image to JPG by encoding the canvas as a data URL
+            const jpgDataUrl = canvas.toDataURL('image/jpeg', 1.0);
+
+            // Display the converted image
+            imagePreview.innerHTML = '<img src="' + jpgDataUrl + '" alt="Converted JPG Image">';
+            downloadButton.href = jpgDataUrl;
+            downloadButton.style.display = 'inline';
+
+            loadingContainer.style.display = 'none'; // Hide the loading page after conversion
+          };
+          image.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert('Please select a valid PNG image.');
+      }
+    }
+
+    function acceptCookies() {
+      document.getElementById('cookieNotification').style.display = 'none';
+      // Implement your logic for accepting cookies here
+    }
+
+    function denyCookies() {
+      document.getElementById('cookieNotification').style.display = 'none';
+      // Implement your logic for denying cookies here
+    }
+  </script>
+</body>
+</html>
